@@ -67,8 +67,10 @@ function moverBotao(){
   btnSim.style.top = y + "px";
 }
 
-btnSim.addEventListener("mouseenter", moverBotao);
-btnSim.addEventListener("touchstart", moverBotao);
+function ativarFuga(){
+  btnSim.addEventListener("mouseenter", moverBotao);
+  btnSim.addEventListener("touchstart", moverBotao);
+}
   
 const etapas = [
   "Você vai?",
@@ -88,6 +90,11 @@ document.getElementById("pergunta");
 
     if(etapaAtual < etapas.length){
       pergunta.innerText = etapas[etapaAtual];
+
+      if(etapaAtual === etapas.length - 1)
+{
+        ativarFuga();
+      }
       return;
     }
   }
