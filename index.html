@@ -51,7 +51,28 @@ button{
 const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
+const etapas = [
+  "Você vai?",
+  "Você tem certeza?",
+  "Você tem certeza absoluta?",
+  "É sua última chance de dizer não..."
+];
+
+let etapaAtual = 0;
+
 function responder(resp){
+  const pergunta =
+document.getElementById("pergunta");
+
+  if(resp === "SIM"){
+    etapaAtual++;
+
+    if(etapaAtual < etapas.length){
+      pergunta.innerText = etapas[etapaAtual];
+      return;
+    }
+  }
+  
   fetch("COLE_AQUI_URL_DO_SCRIPT",{
     method:"POST",
     body:JSON.stringify({nome,resposta:resp,data:new Date()}),
