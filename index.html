@@ -42,8 +42,9 @@ button{
 
 <div>
   <h1 id="nome"></h1>
-  <p>Você vai?</p>
-  <button class="sim" onclick="responder('SIM')">SIM</button>
+  <p id="Pergunta">Você vai?</p>
+  <p id="msg"></p>
+  <button class="sim" id="btnSim" onclick="responder('SIM')">SIM</button>
   <button class="nao" onclick="responder('NAO')">NÃO</button>
 </div>
 
@@ -51,6 +52,24 @@ button{
 const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
+const btnSim =
+document.getElementById("btnSim");
+
+function moverBotao(){
+  const largura = window.innerWidth - 120;
+  const altura = window.innerHeight - 60;
+
+  const x = Math.random() * largura;
+  const y = Math.random() * altura;
+
+  btnSim.style.position = "fixed";
+  btnSim.style.left = x + "px";
+  btnSim.style.top = y + "px";
+}
+
+btnSim.addEventListener("mouseenter", moverBotao);
+btnSim.addEventListener("touchstart", moverBotao);
+  
 const etapas = [
   "Você vai?",
   "Você tem certeza?",
