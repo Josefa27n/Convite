@@ -68,7 +68,24 @@ function moverBotao(){
 }
 
 function ativarFuga(){
-  btnSim.addEventListener("mousemove", moverBotao);
+  document.addEventListener("mousemove", (e) => {
+    const rect = btnSim.getBoundingClientRect();
+    
+    const centroX = rect.left + rect.width / 2;
+    const centroY = rect.top + rect.height / 2;
+
+    const dx = e.clientX - centroX;
+    const dy = e.clientY - centroY;
+
+    const distancia = Math.sqrt(dx * dx + dy * dy);
+
+    if(distancia < 120){
+      
+      moverBotao();
+    }
+    
+  });
+  
   btnSim.addEventListener("touchstart", moverBotao);
 }
   
