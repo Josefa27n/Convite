@@ -87,6 +87,12 @@ function ativarFuga(){
   });
   
   btnSim.addEventListener("touchstart", moverBotao);
+  
+  btnSim.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    moverBotao();
+  });
+  
 }
   
 const etapas = [
