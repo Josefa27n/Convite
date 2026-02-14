@@ -17,7 +17,7 @@ body{
   color:white;
   text-align:center;
   background:black;
-  overflow:hidden; /* evita expandir a página */
+  overflow:hidden;
 }
 
 #bg{
@@ -26,32 +26,54 @@ body{
   width:100%;
   height:100%;
   object-fit:cover;
-  z-index:-1;
+  z-index:-2;
 }
 
 /* CAIXA CENTRAL */
 .card{
+  position:relative;
   background:rgba(0,0,0,0.65);
   backdrop-filter:blur(6px);
   padding:40px 30px;
   border-radius:18px;
   width:340px;
   max-width:90%;
-  box-shadow:0 0 40px rgba(0,0,0,0.7);
-  animation: tremer 1.5s infinite alternate, raio 2s infinite;
+  box-shadow:0 0 20px rgba(0,0,0,0.7);
+  overflow:hidden;
+  animation: tremer 1.8s infinite alternate, raioGlow 2s infinite;
+}
+
+/* CAMADA DOS RAIOS */
+.raios{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:0.9;
+}
+
+.raios svg{
+  width:100%;
+  height:100%;
 }
 
 /* TEXTOS */
+#nome, #pergunta, #msg, .botoes{
+  position:relative;
+  z-index:1;
+}
+
 #nome{
   font-size:26px;
   color:#ffcc00;
   margin-bottom:10px;
+  animation: textoGlow 2s infinite alternate;
 }
 
 #pergunta{
   font-size:20px;
   margin-bottom:15px;
-  animation: pop 0.25s ease;
+  animation: subirDescer 3s ease-in-out infinite;
 }
 
 #msg{
@@ -87,25 +109,39 @@ button:hover{
 }
 
 /* ANIMAÇÕES */
-@keyframes pop {
-  0%   { transform: scale(0.9); opacity: 0.6; }
-  60%  { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(1); }
+@keyframes tremer{
+  0%{ transform:translate(0,0) rotate(0deg); }
+  50%{ transform:translate(1px,-1px) rotate(0.2deg); }
+  100%{ transform:translate(-1px,1px) rotate(-0.2deg); }
 }
 
-@keyframes tremer {
-  0% { transform: translate(0,0); }
-  25% { transform: translate(1px,-1px); }
-  50% { transform: translate(-1px,1px); }
-  75% { transform: translate(1px,1px); }
-  100% { transform: translate(0,0); }
+@keyframes raioGlow{
+  0%{ box-shadow:0 0 10px #00e5ff, 0 0 30px #ff00ff; }
+  50%{ box-shadow:0 0 20px #00e5ff, 0 0 60px #ff00ff; }
+  100%{ box-shadow:0 0 10px #00e5ff, 0 0 30px #ff00ff; }
 }
 
-@keyframes raio {
-  0%   { box-shadow: 0 0 10px #00e5ff, 0 0 25px #ff00ff; }
-  50%  { box-shadow: 0 0 20px #00e5ff, 0 0 45px #ff00ff; }
-  100% { box-shadow: 0 0 10px #00e5ff, 0 0 25px #ff00ff; }
+@keyframes textoGlow{
+  from{ text-shadow:0 0 5px #ffcc00; }
+  to{ text-shadow:0 0 20px #ffcc00, 0 0 40px #ff9800; }
 }
+
+@keyframes subirDescer{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-4px); }
+}
+
+/* RAIOS ANIMADOS */
+@keyframes relampago{
+  0%{ opacity:0; }
+  20%{ opacity:1; }
+  40%{ opacity:0; }
+  100%{ opacity:0; }
+}
+
+.raio1{ animation: relampago 4s infinite; }
+.raio2{ animation: relampago 5s infinite 1s; }
+.raio3{ animation: relampago 6s infinite 2s; }
 </style>
 </head>
 
@@ -116,12 +152,24 @@ button:hover{
 </video>
 
 <div class="card">
+
+  <!-- RAIOS DENTRO DO CARD -->
+  <div class="raios">
+    <svg viewBox="0 0 300 400" preserveAspectRatio="none">
+      <polyline class="raio1" points="50,0 80,80 40,140 90,220 60,300" fill="none" stroke="#00e5ff" stroke-width="2"/>
+      <polyline class="raio2" points="200,0 170,90 210,160 160,240 190,330" fill="none" stroke="#ff00ff" stroke-width="2"/>
+      <polyline class="raio3" points="120,0 140,70 110,140 150,210 130,300" fill="none" stroke="#ffffff" stroke-width="1"/>
+    </svg>
+  </div>
+
   <h1 id="nome"></h1>
   <p id="pergunta">Você vai?</p>
   <p id="msg"></p>
 
-  <button class="sim" id="btnSim" onclick="responder('SIM')">SIM</button>
-  <button class="nao" onclick="responder('NAO')">NÃO</button>
+  <div class="botoes">
+    <button class="sim" id="btnSim" onclick="responder('SIM')">SIM</button>
+    <button class="nao" onclick="responder('NAO')">NÃO</button>
+  </div>
 </div>
 
 <script>
@@ -129,15 +177,12 @@ const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
 const btnSim = document.getElementById("btnSim");
-const pergunta = document.getElementById("pergunta");
 
 function moverBotao(){
   const largura = window.innerWidth - btnSim.offsetWidth - 20;
   const altura = window.innerHeight - btnSim.offsetHeight - 20;
-
   const x = Math.random() * largura;
   const y = Math.random() * altura;
-
   btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
   btnSim.style.top = y + "px";
@@ -146,24 +191,13 @@ function moverBotao(){
 function ativarFuga(){
   document.addEventListener("mousemove", (e) => {
     const rect = btnSim.getBoundingClientRect();
-    const centroX = rect.left + rect.width / 2;
-    const centroY = rect.top + rect.height / 2;
-
-    const dx = e.clientX - centroX;
-    const dy = e.clientY - centroY;
-    const distancia = Math.sqrt(dx * dx + dy * dy);
-
-    if(distancia < 120){
-      moverBotao();
-    }
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
+    if(d < 120) moverBotao();
   });
-
   btnSim.addEventListener("touchstart", moverBotao);
-
-  btnSim.addEventListener("mousedown", (e) => {
-    e.preventDefault();
-    moverBotao();
-  });
+  btnSim.addEventListener("mousedown", e => { e.preventDefault(); moverBotao(); });
 }
 
 const etapas = [
@@ -175,34 +209,16 @@ const etapas = [
 
 let etapaAtual = 0;
 
-function animarPergunta(){
-  pergunta.style.animation = "none";
-  pergunta.offsetHeight; // força reflow
-  pergunta.style.animation = "pop 0.25s ease";
-}
-
 function responder(resp){
+  const pergunta = document.getElementById("pergunta");
   if(resp === "SIM"){
     etapaAtual++;
-
     if(etapaAtual < etapas.length){
       pergunta.innerText = etapas[etapaAtual];
-      animarPergunta();
-
-      if(etapaAtual === etapas.length - 1){
-        ativarFuga();
-      }
+      if(etapaAtual === etapas.length - 1) ativarFuga();
       return;
     }
   }
-
-  fetch("COLE_AQUI_URL_DO_SCRIPT",{
-    method:"POST",
-    body:JSON.stringify({nome,resposta:resp,data:new Date()}),
-    headers:{"Content-Type":"application/json"}
-  }).then(()=>{
-    document.getElementById("msg").innerText = "Resposta enviada!";
-  });
 }
 </script>
 
