@@ -109,8 +109,8 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const largura = window.innerWidth - btnSim.offsetWidth;
-  const altura = window.innerHeight - btnSim.offsetHeight;
+  const largura = window.innerWidth - btnSim.offsetWidth - 20;
+  const altura = window.innerHeight - btnSim.offsetHeight - 20;
 
   const x = Math.random() * largura;
   const y = Math.random() * altura;
