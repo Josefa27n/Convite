@@ -19,38 +19,22 @@ body{
   overflow:hidden;
 }
 
-/* ===== VÍDEOS ===== */
-#bg-pc, #bg-mobile{
+/* ===== VÍDEO DE FUNDO ===== */
+#bg{
   position:fixed;
   inset:0;
-  width:100%;
-  height:100%;
   z-index:-2;
   background:black;
+  width:100%;
+  height:100%;
+  object-fit:cover;       /* PC preenche */
+  pointer-events:none;    /* não captura clique */
 }
 
-/* PC usa fundo.mp4 */
-#bg-pc{
-  object-fit:cover;
-}
-
-/* MOBILE escondido por padrão */
-#bg-mobile{
-  display:none;
-}
-
-/* 📱 CELULAR */
+/* 📱 CELULAR: mostra inteiro */
 @media (max-width:768px){
-
-  #bg-pc{
-    display:none;
-  }
-
-  #bg-mobile{
-    display:block;
+  #bg{
     object-fit:contain;   /* nunca corta */
-    width:100vw;
-    height:100vh;
   }
 }
 
@@ -143,45 +127,17 @@ button:hover{ transform:scale(1.08); }
 .raio1{ animation: relampago 4s infinite; }
 .raio2{ animation: relampago 5s infinite 1s; }
 .raio3{ animation: relampago 6s infinite 2s; }
-
-/* ===== FOGOS ===== */
-.rocket{
-  position:fixed;
-  bottom:-20px;
-  width:4px;
-  height:20px;
-  background:linear-gradient(to top, #fff, transparent);
-  animation: subir 1s ease-out forwards;
-}
-@keyframes subir{
-  from{ transform:translateY(0); opacity:1; }
-  to{ transform:translateY(var(--altura)); opacity:0; }
-}
-.firework{
-  position:fixed;
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  pointer-events:none;
-  animation: explodir 1.4s ease-out forwards;
-}
-@keyframes explodir{
-  from{ transform:translate(0,0) scale(1); opacity:1; }
-  to{ transform:translate(var(--x), var(--y)) scale(0); opacity:0; }
-}
 </style>
 </head>
 
 <body>
 
-<!-- 💻 PC -->
-<video id="bg-pc" autoplay muted loop playsinline>
-  <source src="fundo.mp4" type="video/mp4">
-</video>
-
-<!-- 📱 CELULAR -->
-<video id="bg-mobile" autoplay muted loop playsinline>
-  <source src="fundo-mobile.mp4" type="video/mp4">
+<!-- VÍDEO ÚNICO COM SOURCE CONDICIONAL -->
+<video id="bg" autoplay muted loop playsinline webkit-playsinline>
+  <!-- PC -->
+  <source src="fundo.mp4" type="video/mp4" media="(min-width: 769px)">
+  <!-- CELULAR -->
+  <source src="fundo-mobile.mp4" type="video/mp4" media="(max-width: 768px)">
 </video>
 
 <div class="card">
