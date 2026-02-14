@@ -25,9 +25,19 @@ body{
   inset:0;
   width:100%;
   height:100%;
-  object-fit:cover;
+  object-fit: cover;   /* padrão: computador */
   z-index:-2;
+  background:black;
 }
+
+/* 📱 Apenas celular */
+@media (max-width: 768px){
+  #bg{
+    object-fit: contain;  /* sem zoom no celular */
+    background:black;    /* barras pretas se sobrar espaço */
+  }
+}
+
 
 /* CAIXA CENTRAL */
 .card{
