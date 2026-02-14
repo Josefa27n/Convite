@@ -109,11 +109,14 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const largura = window.innerWidth - btnSim.offsetWidth - 20;
-  const altura = window.innerHeight - btnSim.offsetHeight - 20;
+  const margem = 20; // distância mínima das bordas
 
-  const x = Math.random() * largura;
-  const y = Math.random() * altura;
+  const largura = window.innerWidth - btnSim.offsetWidth - margem;
+  const altura = window.innerHeight - btnSim.offsetHeight - margem;
+
+  const x = Math.max(margem, Math.random() * largura);
+  const y = Math.max(margem, Math.random() * altura);
+
 
   btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
