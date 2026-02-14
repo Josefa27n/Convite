@@ -17,8 +17,7 @@ body{
   color:white;
   text-align:center;
   background:black;
-
-  overflow:hidden;
+  overflow:hidden; /* evita expandir a página */
 }
 
 #bg{
@@ -39,6 +38,7 @@ body{
   width:340px;
   max-width:90%;
   box-shadow:0 0 40px rgba(0,0,0,0.7);
+  animation: tremer 1.5s infinite alternate, raio 2s infinite;
 }
 
 /* TEXTOS */
@@ -51,6 +51,7 @@ body{
 #pergunta{
   font-size:20px;
   margin-bottom:15px;
+  animation: pop 0.25s ease;
 }
 
 #msg{
@@ -84,6 +85,27 @@ button{
 button:hover{
   transform:scale(1.08);
 }
+
+/* ANIMAÇÕES */
+@keyframes pop {
+  0%   { transform: scale(0.9); opacity: 0.6; }
+  60%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+@keyframes tremer {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(1px,-1px); }
+  50% { transform: translate(-1px,1px); }
+  75% { transform: translate(1px,1px); }
+  100% { transform: translate(0,0); }
+}
+
+@keyframes raio {
+  0%   { box-shadow: 0 0 10px #00e5ff, 0 0 25px #ff00ff; }
+  50%  { box-shadow: 0 0 20px #00e5ff, 0 0 45px #ff00ff; }
+  100% { box-shadow: 0 0 10px #00e5ff, 0 0 25px #ff00ff; }
+}
 </style>
 </head>
 
@@ -107,29 +129,19 @@ const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
 const btnSim = document.getElementById("btnSim");
+const pergunta = document.getElementById("pergunta");
 
 function moverBotao(){
+  const largura = window.innerWidth - btnSim.offsetWidth - 20;
+  const altura = window.innerHeight - btnSim.offsetHeight - 20;
 
-  const larguraTela = document.documentElement.clientWidth;
-  const alturaTela = document.documentElement.clientHeight;
-
-  const larguraBotao = btnSim.offsetWidth;
-  const alturaBotao = btnSim.offsetHeight;
-
-  const margem = 20;
-
-  const maxX = larguraTela - larguraBotao - margem;
-  const maxY = alturaTela - alturaBotao - margem;
-
-  const x = Math.random() * maxX;
-  const y = Math.random() * maxY;
+  const x = Math.random() * largura;
+  const y = Math.random() * altura;
 
   btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
   btnSim.style.top = y + "px";
 }
-
-
 
 function ativarFuga(){
   document.addEventListener("mousemove", (e) => {
@@ -163,14 +175,19 @@ const etapas = [
 
 let etapaAtual = 0;
 
-function responder(resp){
-  const pergunta = document.getElementById("pergunta");
+function animarPergunta(){
+  pergunta.style.animation = "none";
+  pergunta.offsetHeight; // força reflow
+  pergunta.style.animation = "pop 0.25s ease";
+}
 
+function responder(resp){
   if(resp === "SIM"){
     etapaAtual++;
 
     if(etapaAtual < etapas.length){
       pergunta.innerText = etapas[etapaAtual];
+      animarPergunta();
 
       if(etapaAtual === etapas.length - 1){
         ativarFuga();
