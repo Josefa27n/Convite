@@ -109,19 +109,20 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const margem = 20; // distância mínima das bordas
 
-  const largura = window.innerWidth - btnSim.offsetWidth - margem;
-  const altura = window.innerHeight - btnSim.offsetHeight - margem;
+  const margem = 20;
 
-  const x = Math.max(margem, Math.random() * largura);
-  const y = Math.max(margem, Math.random() * altura);
+  const largura = document.documentElement.clientWidth - btnSim.offsetWidth - margem;
+  const altura = document.documentElement.clientHeight - btnSim.offsetHeight - margem;
 
+  const x = Math.random() * largura;
+  const y = Math.random() * altura;
 
   btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
   btnSim.style.top = y + "px";
 }
+
 
 function ativarFuga(){
   document.addEventListener("mousemove", (e) => {
