@@ -3,10 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Convite</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
 body{
   margin:0;
-  font-family:Arial;
+  font-family: 'Poppins', Arial, sans-serif;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -15,6 +18,7 @@ body{
   text-align:center;
   background:black;
 }
+
 #bg{
   position:fixed;
   inset:0;
@@ -23,41 +27,118 @@ body{
   object-fit:cover;
   z-index:-1;
 }
+
+/* CAIXA CENTRAL */
+.card{
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  padding: 40px 30px;
+  border-radius: 16px;
+  max-width: 90%;
+  width: 320px;
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+
+/* TEXTO */
+#nome{
+  font-size: 26px;
+  color: #ffcc00;
+  margin-bottom: 10px;
+}
+
+#pergunta{
+  font-size: 20px;
+  margin-bottom: 25px;
+}
+
+/* BOTÕES */
 button{
-  padding:15px 30px;
-  margin:10px;
+  padding:14px 28px;
+  margin:8px;
   font-size:18px;
   border:none;
+  border-radius: 10px;
   cursor:pointer;
+  transition: 0.2s;
 }
-.sim{background:green;color:white;}
-.nao{background:red;color:white;}
+
+.sim{
+  background: linear-gradient(45deg, #00c853, #00e676);
+  color: black;
+  font-weight: 600;
+}
+
+.nao{
+  background: linear-gradient(45deg, #d50000, #ff5252);
+  color: white;
+}
+
+button:hover{
+  transform: scale(1.05);
+}
 </style>
 </head>
+
 <body>
 
 <video autoplay muted loop playsinline id="bg">
   <source src="fundo.mp4" type="video/mp4">
 </video>
 
-<div>
+<div class="card">
   <h1 id="nome"></h1>
   <p id="pergunta">Você vai?</p>
-  <p id="msg"></p>
-  <button class="sim" id="btnSim" onclick="responder('SIM')">SIM</button>
+
+  <button id="btnSim" class="sim" onclick="responder('SIM')">SIM</button>
   <button class="nao" onclick="responder('NAO')">NÃO</button>
+
+  <p id="msg"></p>
 </div>
 
 <script>
 const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
-const btnSim =
-document.getElementById("btnSim");
+const etapas = [
+  "Você vai?",
+  "Você tem certeza?",
+  "Você tem certeza absoluta?",
+  "É sua última chance de dizer não..."
+];
+
+let etapaAtual = 0;
+
+function responder(resp){
+  const pergunta = document.getElementById("pergunta");
+
+  if(resp === "SIM"){
+    etapaAtual++;
+
+    if(etapaAtual < etapas.length){
+      pergunta.innerText = etapas[etapaAtual];
+
+      if(etapaAtual === etapas.length - 1){
+        ativarFuga();
+      }
+      return;
+    }
+  }
+
+  fetch("COLE_AQUI_URL_DO_SCRIPT",{
+    method:"POST",
+    body:JSON.stringify({nome,resposta:resp,data:new Date()}),
+    headers:{"Content-Type":"application/json"}
+  }).then(()=>{
+    document.getElementById("msg").innerText = "Resposta enviada!";
+  });
+}
+
+/* FUGA DO BOTÃO */
+const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const largura = window.innerWidth - 120;
-  const altura = window.innerHeight - 60;
+  const largura = window.innerWidth - btnSim.offsetWidth - 20;
+  const altura = window.innerHeight - btnSim.offsetHeight - 20;
 
   const x = Math.random() * largura;
   const y = Math.random() * altura;
@@ -70,63 +151,18 @@ function moverBotao(){
 function ativarFuga(){
   document.addEventListener("mousemove", (e) => {
     const rect = btnSim.getBoundingClientRect();
-    
-    const centroX = rect.left + rect.width / 2;
-    const centroY = rect.top + rect.height / 2;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
 
-    const dx = e.clientX - centroX;
-    const dy = e.clientY - centroY;
+    const dx = e.clientX - cx;
+    const dy = e.clientY - cy;
 
-    const distancia = Math.sqrt(dx * dx + dy * dy);
-
-    if(distancia < 120){
-      
+    if(Math.sqrt(dx*dx + dy*dy) < 120){
       moverBotao();
     }
-    
   });
-  
+
   btnSim.addEventListener("touchstart", moverBotao);
-  
-  btnSim.addEventListener("mousedown", (e) => {
-    e.preventDefault();
-    moverBotao();
-  });
-  
-}
-  
-const etapas = [
-  "Você vai?",
-  "Você tem certeza?",
-  "Você tem certeza absoluta?",
-  "É sua última chance de dizer não..."
-];
-
-let etapaAtual = 0;
-
-function responder(resp){
-  const pergunta =
-document.getElementById("pergunta");
-
-  if(resp === "SIM"){
-    etapaAtual++;
-
-    if(etapaAtual < etapas.length){
-      pergunta.innerText = etapas[etapaAtual];
-
-      if(etapaAtual === etapas.length - 1)
-{
-        ativarFuga();
-      }
-      return;
-    }
-  }
-  
-  fetch("COLE_AQUI_URL_DO_SCRIPT",{
-    method:"POST",
-    body:JSON.stringify({nome,resposta:resp,data:new Date()}),
-    headers:{"Content-Type":"application/json"}
-  }).then(()=>{})
 }
 </script>
 
