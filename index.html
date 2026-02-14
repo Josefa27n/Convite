@@ -25,17 +25,25 @@ body{
   inset:0;
   width:100%;
   height:100%;
-  object-fit: cover;   /* padrão PC */
   z-index:-2;
   background:black;
+  object-fit: cover; /* PC normal */
 }
 
-/* 📱 Celular: SEM CORTAR O VÍDEO */
+/* 📱 Android + iPhone: mostra o vídeo inteiro */
 @media (max-width: 768px){
   #bg{
-    object-fit: contain !important;  /* mostra 100% do vídeo */
+    width:auto;
+    height:auto;
+    min-width:100vw;
+    min-height:100vh;
+    max-width:100vw;
+    max-height:100vh;
+    object-fit: contain !important;  /* nunca corta */
+    margin:auto;                     /* centraliza */
   }
 }
+
 
 
 
@@ -160,7 +168,7 @@ button:hover{ transform:scale(1.08); }
 
 <body>
 
-<video autoplay muted loop playsinline id="bg">
+<video id="bg" autoplay muted loop playsinline webkit-playsinline>
   <source src="fundo.mp4" type="video/mp4">
 </video>
 
