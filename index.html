@@ -110,18 +110,25 @@ const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
 
+  const larguraTela = document.documentElement.clientWidth;
+  const alturaTela = document.documentElement.clientHeight;
+
+  const larguraBotao = btnSim.offsetWidth;
+  const alturaBotao = btnSim.offsetHeight;
+
   const margem = 20;
 
-  const largura = document.documentElement.clientWidth - btnSim.offsetWidth - margem;
-  const altura = document.documentElement.clientHeight - btnSim.offsetHeight - margem;
+  const maxX = larguraTela - larguraBotao - margem;
+  const maxY = alturaTela - alturaBotao - margem;
 
-  const x = Math.random() * largura;
-  const y = Math.random() * altura;
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
 
   btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
   btnSim.style.top = y + "px";
 }
+
 
 
 function ativarFuga(){
