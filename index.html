@@ -9,7 +9,7 @@
 <style>
 body{
   margin:0;
-  font-family: 'Poppins', Arial, sans-serif;
+  font-family:'Poppins', Arial, sans-serif;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -30,25 +30,31 @@ body{
 
 /* CAIXA CENTRAL */
 .card{
-  background: rgba(0,0,0,0.65);
-  backdrop-filter: blur(6px);
-  padding: 40px 30px;
-  border-radius: 16px;
-  max-width: 90%;
-  width: 320px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+  background:rgba(0,0,0,0.65);
+  backdrop-filter:blur(6px);
+  padding:40px 30px;
+  border-radius:18px;
+  width:340px;
+  max-width:90%;
+  box-shadow:0 0 40px rgba(0,0,0,0.7);
 }
 
-/* TEXTO */
+/* TEXTOS */
 #nome{
-  font-size: 26px;
-  color: #ffcc00;
-  margin-bottom: 10px;
+  font-size:26px;
+  color:#ffcc00;
+  margin-bottom:10px;
 }
 
 #pergunta{
-  font-size: 20px;
-  margin-bottom: 25px;
+  font-size:20px;
+  margin-bottom:15px;
+}
+
+#msg{
+  font-size:16px;
+  margin-bottom:20px;
+  color:#00e676;
 }
 
 /* BOTÕES */
@@ -57,24 +63,24 @@ button{
   margin:8px;
   font-size:18px;
   border:none;
-  border-radius: 10px;
+  border-radius:12px;
   cursor:pointer;
-  transition: 0.2s;
+  transition:0.2s;
+  font-weight:600;
 }
 
 .sim{
-  background: linear-gradient(45deg, #00c853, #00e676);
-  color: black;
-  font-weight: 600;
+  background:linear-gradient(45deg,#00c853,#00e676);
+  color:black;
 }
 
 .nao{
-  background: linear-gradient(45deg, #d50000, #ff5252);
-  color: white;
+  background:linear-gradient(45deg,#d50000,#ff5252);
+  color:white;
 }
 
 button:hover{
-  transform: scale(1.05);
+  transform:scale(1.08);
 }
 </style>
 </head>
@@ -88,16 +94,52 @@ button:hover{
 <div class="card">
   <h1 id="nome"></h1>
   <p id="pergunta">Você vai?</p>
-
-  <button id="btnSim" class="sim" onclick="responder('SIM')">SIM</button>
-  <button class="nao" onclick="responder('NAO')">NÃO</button>
-
   <p id="msg"></p>
+
+  <button class="sim" id="btnSim" onclick="responder('SIM')">SIM</button>
+  <button class="nao" onclick="responder('NAO')">NÃO</button>
 </div>
 
 <script>
 const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
+
+const btnSim = document.getElementById("btnSim");
+
+function moverBotao(){
+  const largura = window.innerWidth - btnSim.offsetWidth - 20;
+  const altura = window.innerHeight - btnSim.offsetHeight - 20;
+
+  const x = Math.random() * largura;
+  const y = Math.random() * altura;
+
+  btnSim.style.position = "fixed";
+  btnSim.style.left = x + "px";
+  btnSim.style.top = y + "px";
+}
+
+function ativarFuga(){
+  document.addEventListener("mousemove", (e) => {
+    const rect = btnSim.getBoundingClientRect();
+    const centroX = rect.left + rect.width / 2;
+    const centroY = rect.top + rect.height / 2;
+
+    const dx = e.clientX - centroX;
+    const dy = e.clientY - centroY;
+    const distancia = Math.sqrt(dx * dx + dy * dy);
+
+    if(distancia < 120){
+      moverBotao();
+    }
+  });
+
+  btnSim.addEventListener("touchstart", moverBotao);
+
+  btnSim.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    moverBotao();
+  });
+}
 
 const etapas = [
   "Você vai?",
@@ -131,38 +173,6 @@ function responder(resp){
   }).then(()=>{
     document.getElementById("msg").innerText = "Resposta enviada!";
   });
-}
-
-/* FUGA DO BOTÃO */
-const btnSim = document.getElementById("btnSim");
-
-function moverBotao(){
-  const largura = window.innerWidth - btnSim.offsetWidth - 20;
-  const altura = window.innerHeight - btnSim.offsetHeight - 20;
-
-  const x = Math.random() * largura;
-  const y = Math.random() * altura;
-
-  btnSim.style.position = "fixed";
-  btnSim.style.left = x + "px";
-  btnSim.style.top = y + "px";
-}
-
-function ativarFuga(){
-  document.addEventListener("mousemove", (e) => {
-    const rect = btnSim.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-
-    const dx = e.clientX - cx;
-    const dy = e.clientY - cy;
-
-    if(Math.sqrt(dx*dx + dy*dy) < 120){
-      moverBotao();
-    }
-  });
-
-  btnSim.addEventListener("touchstart", moverBotao);
 }
 </script>
 
