@@ -19,26 +19,38 @@ body{
   overflow:hidden;
 }
 
-/* ===== VÍDEO DE FUNDO ===== */
-#bg{
+/* WRAPPER DO VÍDEO */
+#bgWrap{
   position:fixed;
   inset:0;
   z-index:-2;
   background:black;
-  width:100%;
-  height:100%;
-  object-fit:cover;       /* PC preenche */
-  pointer-events:none;    /* não captura clique */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  pointer-events:none;
 }
 
-/* 📱 CELULAR: mostra inteiro */
-@media (max-width:768px){
+/* PC: preenche */
+#bg{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* CELULAR: mostra inteiro (sem corte) */
+@media (max-width: 768px){
   #bg{
-    object-fit:contain;   /* nunca corta */
+    width:auto;
+    height:auto;
+    max-width:100vw;
+    max-height:100vh;
+    object-fit:contain;
   }
 }
 
-/* ===== CAIXA CENTRAL ===== */
+/* CAIXA CENTRAL */
 .card{
   position:relative;
   background:rgba(0,0,0,0.65);
@@ -127,18 +139,42 @@ button:hover{ transform:scale(1.08); }
 .raio1{ animation: relampago 4s infinite; }
 .raio2{ animation: relampago 5s infinite 1s; }
 .raio3{ animation: relampago 6s infinite 2s; }
+
+/* FOGOS */
+.rocket{
+  position:fixed;
+  bottom:-20px;
+  width:4px;
+  height:20px;
+  background:linear-gradient(to top, #fff, transparent);
+  animation: subir 1s ease-out forwards;
+}
+@keyframes subir{
+  from{ transform:translateY(0); opacity:1; }
+  to{ transform:translateY(var(--altura)); opacity:0; }
+}
+.firework{
+  position:fixed;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  pointer-events:none;
+  animation: explodir 1.4s ease-out forwards;
+}
+@keyframes explodir{
+  from{ transform:translate(0,0) scale(1); opacity:1; }
+  to{ transform:translate(var(--x), var(--y)) scale(0); opacity:0; }
+}
 </style>
 </head>
 
 <body>
 
-<!-- VÍDEO ÚNICO COM SOURCE CONDICIONAL -->
-<video id="bg" autoplay muted loop playsinline webkit-playsinline>
-  <!-- PC -->
-  <source src="fundo.mp4" type="video/mp4" media="(min-width: 769px)">
-  <!-- CELULAR -->
-  <source src="fundo-mobile.mp4" type="video/mp4" media="(max-width: 768px)">
-</video>
+<div id="bgWrap">
+  <video id="bg" autoplay muted loop playsinline webkit-playsinline>
+    <source src="fundo.mp4" type="video/mp4">
+  </video>
+</div>
 
 <div class="card">
   <div class="raios">
@@ -162,6 +198,92 @@ button:hover{ transform:scale(1.08); }
 <script>
 const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
+
+const btnSim = document.getElementById("btnSim");
+
+function moverBotao(){
+  const largura = window.innerWidth - btnSim.offsetWidth - 20;
+  const altura = window.innerHeight - btnSim.offsetHeight - 20;
+  btnSim.style.position = "fixed";
+  btnSim.style.left = Math.random() * largura + "px";
+  btnSim.style.top = Math.random() * altura + "px";
+}
+
+function ativarFuga(){
+  document.addEventListener("mousemove", (e) => {
+    const rect = btnSim.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
+    if(d < 120) moverBotao();
+  });
+  btnSim.addEventListener("touchstart", moverBotao, {passive:false});
+  btnSim.addEventListener("mousedown", e => { e.preventDefault(); moverBotao(); });
+}
+
+const etapas = [
+  "Você vai?",
+  "Você tem certeza?",
+  "Você tem certeza absoluta?",
+  "É sua última chance de dizer não..."
+];
+let etapaAtual = 0;
+
+function fogosAnoNovo(){
+  for(let f=0; f<6; f++){
+    const x = Math.random() * window.innerWidth;
+    const altura = -(200 + Math.random()*300);
+    const rocket = document.createElement("div");
+    rocket.className = "rocket";
+    rocket.style.left = x + "px";
+    rocket.style.setProperty("--altura", altura + "px");
+    document.body.appendChild(rocket);
+
+    setTimeout(() => {
+      rocket.remove();
+      explodir(x, window.innerHeight + altura);
+    }, 900);
+  }
+}
+
+function explodir(x, y){
+  for(let i=0;i<80;i++){ /* reduzido para performance */
+    const p = document.createElement("div");
+    p.className = "firework";
+    p.style.left = x + "px";
+    p.style.top = y + "px";
+    p.style.background = `hsl(${Math.random()*360},100%,60%)`;
+    const ang = Math.random() * Math.PI * 2;
+    const dist = 150 + Math.random()*250;
+    p.style.setProperty("--x", Math.cos(ang)*dist + "px");
+    p.style.setProperty("--y", Math.sin(ang)*dist + "px");
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1400);
+  }
+}
+
+function responder(resp){
+  const pergunta = document.getElementById("pergunta");
+  const msg = document.getElementById("msg");
+
+  if(resp === "SIM"){
+    etapaAtual++;
+    if(etapaAtual < etapas.length){
+      pergunta.innerText = etapas[etapaAtual];
+      if(etapaAtual === etapas.length - 1) ativarFuga();
+      return;
+    }
+  }
+
+  if(resp === "NAO"){
+    let i = 0;
+    const show = setInterval(() => {
+      fogosAnoNovo();
+      if(++i > 6) clearInterval(show);
+    }, 350);
+    msg.innerText = "fico triste com uma notícia dessa 🥳🎉";
+  }
+}
 </script>
 
 </body>
