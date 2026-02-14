@@ -43,7 +43,7 @@ body{
   animation: tremer 1.8s infinite alternate, raioGlow 2s infinite;
 }
 
-/* CAMADA DOS RAIOS */
+/* RAIOS */
 .raios{
   position:absolute;
   inset:0;
@@ -51,17 +51,10 @@ body{
   z-index:0;
   opacity:0.9;
 }
-
-.raios svg{
-  width:100%;
-  height:100%;
-}
+.raios svg{ width:100%; height:100%; }
 
 /* TEXTOS */
-#nome, #pergunta, #msg, .botoes{
-  position:relative;
-  z-index:1;
-}
+#nome, #pergunta, #msg, .botoes{ position:relative; z-index:1; }
 
 #nome{
   font-size:26px;
@@ -93,20 +86,9 @@ button{
   transition:0.2s;
   font-weight:600;
 }
-
-.sim{
-  background:linear-gradient(45deg,#00c853,#00e676);
-  color:black;
-}
-
-.nao{
-  background:linear-gradient(45deg,#d50000,#ff5252);
-  color:white;
-}
-
-button:hover{
-  transform:scale(1.08);
-}
+.sim{ background:linear-gradient(45deg,#00c853,#00e676); color:black; }
+.nao{ background:linear-gradient(45deg,#d50000,#ff5252); color:white; }
+button:hover{ transform:scale(1.08); }
 
 /* ANIMAÇÕES */
 @keyframes tremer{
@@ -114,34 +96,44 @@ button:hover{
   50%{ transform:translate(1px,-1px) rotate(0.2deg); }
   100%{ transform:translate(-1px,1px) rotate(-0.2deg); }
 }
-
 @keyframes raioGlow{
   0%{ box-shadow:0 0 10px #00e5ff, 0 0 30px #ff00ff; }
   50%{ box-shadow:0 0 20px #00e5ff, 0 0 60px #ff00ff; }
   100%{ box-shadow:0 0 10px #00e5ff, 0 0 30px #ff00ff; }
 }
-
 @keyframes textoGlow{
   from{ text-shadow:0 0 5px #ffcc00; }
   to{ text-shadow:0 0 20px #ffcc00, 0 0 40px #ff9800; }
 }
-
 @keyframes subirDescer{
   0%,100%{ transform:translateY(0); }
   50%{ transform:translateY(-4px); }
 }
-
-/* RAIOS ANIMADOS */
 @keyframes relampago{
   0%{ opacity:0; }
   20%{ opacity:1; }
   40%{ opacity:0; }
   100%{ opacity:0; }
 }
-
 .raio1{ animation: relampago 4s infinite; }
 .raio2{ animation: relampago 5s infinite 1s; }
 .raio3{ animation: relampago 6s infinite 2s; }
+
+/* FOGOS */
+.firework{
+  position:fixed;
+  left:50%;
+  top:50%;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  pointer-events:none;
+  animation: explodir 1.2s ease-out forwards;
+}
+@keyframes explodir{
+  from{ transform:translate(0,0) scale(1); opacity:1; }
+  to{ transform:translate(var(--x), var(--y)) scale(0); opacity:0; }
+}
 </style>
 </head>
 
@@ -152,8 +144,6 @@ button:hover{
 </video>
 
 <div class="card">
-
-  <!-- RAIOS DENTRO DO CARD -->
   <div class="raios">
     <svg viewBox="0 0 300 400" preserveAspectRatio="none">
       <polyline class="raio1" points="50,0 80,80 40,140 90,220 60,300" fill="none" stroke="#00e5ff" stroke-width="2"/>
@@ -206,11 +196,27 @@ const etapas = [
   "Você tem certeza absoluta?",
   "É sua última chance de dizer não..."
 ];
-
 let etapaAtual = 0;
+
+/* 🎆 FOGOS DE ARTIFÍCIO */
+function soltarFogos(qtd = 80){
+  for(let i=0;i<qtd;i++){
+    const f = document.createElement("div");
+    f.className = "firework";
+    f.style.background = `hsl(${Math.random()*360},100%,60%)`;
+    f.style.left = Math.random()*window.innerWidth + "px";
+    f.style.top = Math.random()*window.innerHeight + "px";
+    f.style.setProperty("--x", (Math.random()*400-200) + "px");
+    f.style.setProperty("--y", (Math.random()*400-200) + "px");
+    document.body.appendChild(f);
+    setTimeout(()=>f.remove(),1200);
+  }
+}
 
 function responder(resp){
   const pergunta = document.getElementById("pergunta");
+  const msg = document.getElementById("msg");
+
   if(resp === "SIM"){
     etapaAtual++;
     if(etapaAtual < etapas.length){
@@ -218,6 +224,12 @@ function responder(resp){
       if(etapaAtual === etapas.length - 1) ativarFuga();
       return;
     }
+  }
+
+  if(resp === "NAO"){
+    soltarFogos(120);
+    msg.innerText = "fico triste com uma notícia dessa 🥳🎉";
+    return;
   }
 }
 </script>
