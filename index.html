@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Convite</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-
 <style>
 body{
   margin:0;
@@ -19,26 +19,26 @@ body{
   overflow:hidden;
 }
 
-/* VÍDEO DE FUNDO */
+/* ===== VÍDEO DE FUNDO ===== */
 #bg{
   position:fixed;
   inset:0;
-  width:100%;
-  height:100%;
   z-index:-2;
   background:black;
-  object-fit:cover;     /* PC: preenche */
-  pointer-events:none;
+  width:100%;
+  height:100%;
+  object-fit:cover;       /* PC preenche */
+  pointer-events:none;    /* não captura clique */
 }
 
-/* CELULAR: mostra inteiro (com bordas pretas se precisar) */
-@media (max-width: 768px){
+/* 📱 CELULAR: mostra inteiro */
+@media (max-width:768px){
   #bg{
-    object-fit:contain; /* nunca corta */
+    object-fit:contain;   /* nunca corta */
   }
 }
 
-/* CAIXA CENTRAL */
+/* ===== CAIXA CENTRAL ===== */
 .card{
   position:relative;
   background:rgba(0,0,0,0.65);
@@ -129,12 +129,14 @@ button:hover{ transform:scale(1.08); }
 .raio3{ animation: relampago 6s infinite 2s; }
 </style>
 </head>
-
 <body>
 
-<!-- VÍDEO ÚNICO -->
+<!-- VÍDEO ÚNICO COM SOURCE CONDICIONAL -->
 <video id="bg" autoplay muted loop playsinline webkit-playsinline>
-  <source src="fundo.mp4" type="video/mp4">
+  <!-- PC -->
+  <source src="fundo.mp4" type="video/mp4" media="(min-width: 769px)">
+  <!-- CELULAR -->
+  <source src="fundo-mobile.mp4" type="video/mp4" media="(max-width: 768px)">
 </video>
 
 <div class="card">
@@ -159,54 +161,6 @@ button:hover{ transform:scale(1.08); }
 <script>
 const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
-
-const btnSim = document.getElementById("btnSim");
-
-function moverBotao(){
-  const largura = window.innerWidth - btnSim.offsetWidth - 20;
-  const altura = window.innerHeight - btnSim.offsetHeight - 20;
-  btnSim.style.position = "fixed";
-  btnSim.style.left = Math.random() * largura + "px";
-  btnSim.style.top = Math.random() * altura + "px";
-}
-
-function ativarFuga(){
-  document.addEventListener("mousemove", (e) => {
-    const rect = btnSim.getBoundingClientRect();
-    const cx = rect.left + rect.width/2;
-    const cy = rect.top + rect.height/2;
-    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
-    if(d < 120) moverBotao();
-  });
-  btnSim.addEventListener("touchstart", moverBotao, {passive:false});
-  btnSim.addEventListener("mousedown", e => { e.preventDefault(); moverBotao(); });
-}
-
-const etapas = [
-  "Você vai?",
-  "Você tem certeza?",
-  "Você tem certeza absoluta?",
-  "É sua última chance de dizer não..."
-];
-let etapaAtual = 0;
-
-function responder(resp){
-  const pergunta = document.getElementById("pergunta");
-  const msg = document.getElementById("msg");
-
-  if(resp === "SIM"){
-    etapaAtual++;
-    if(etapaAtual < etapas.length){
-      pergunta.innerText = etapas[etapaAtual];
-      if(etapaAtual === etapas.length - 1) ativarFuga();
-      return;
-    }
-  }
-
-  if(resp === "NAO"){
-    msg.innerText = "fico triste com uma notícia dessa 🥳🎉";
-  }
-}
 </script>
 
 </body>
