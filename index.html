@@ -111,33 +111,27 @@ const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
 const btnSim = document.getElementById("btnSim");
+const posInicial = btnSim.getBoundingClientRect(); // posição inicial do botão
 
 function moverBotao(){
   const margem = 8;
-  const area = document.getElementById("safeArea").getBoundingClientRect();
-  
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
-
   const btnNao = document.querySelector(".nao");
   const naoRect = btnNao.getBoundingClientRect();
+
+  // Limites máximos relativos à posição inicial
+  const minX = posInicial.left - 20; // 20px para esquerda
+  const maxX = posInicial.left + 20; // 20px para direita
+  const minY = posInicial.top - 50;  // 50px para cima
+  const maxY = posInicial.top + 50;  // 50px para baixo
 
   let x, y;
   let tentativas = 0;
 
   do {
-    // Limite máximo de salto vertical menor no celular
-    const maxX = area.width - bw;
-    const maxY = area.height - bh;
-    
-    x = area.left + Math.random() * maxX;
-    y = area.top  + Math.random() * maxY;
-
-    // No celular, limita ainda mais para não sumir
-    if(window.innerWidth <= 768){
-      y = Math.min(y, window.innerHeight - bh - margem);
-    }
-
+    x = Math.random() * (maxX - minX) + minX;
+    y = Math.random() * (maxY - minY) + minY;
     tentativas++;
     if(tentativas > 50) break;
   } while (
@@ -147,25 +141,21 @@ function moverBotao(){
     y < (naoRect.bottom + margem)
   );
 
+  btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
+  btnSim.style.margin = "0";
+  btnSim.style.zIndex = "999";
 }
 
 function ativarFuga(){
-  const rect = btnSim.getBoundingClientRect();
-  btnSim.style.position = "fixed";
-  btnSim.style.left = rect.left + "px";
-  btnSim.style.top = rect.top + "px";
-  btnSim.style.margin = "0";
-  btnSim.style.zIndex = "999";
-
   document.addEventListener("mousemove", (e)=>{
-    const btnRect = btnSim.getBoundingClientRect();
-    const centroX = btnRect.left + btnRect.width/2;
-    const centroY = btnRect.top + btnRect.height/2;
+    const rect = btnSim.getBoundingClientRect();
+    const centroX = rect.left + rect.width/2;
+    const centroY = rect.top + rect.height/2;
     const dx = e.clientX - centroX;
     const dy = e.clientY - centroY;
-    if(Math.sqrt(dx*dx+dy*dy)<120){
+    if(Math.sqrt(dx*dx + dy*dy)<120){
       moverBotao();
     }
   });
