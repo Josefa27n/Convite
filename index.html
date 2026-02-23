@@ -22,11 +22,15 @@ html, body{
   height:100%;
   overflow:hidden;
 }
+
+/* Área onde o botão pode fugir */
 .safe-area{
   position: fixed;
-  inset: 10% 10%;
+  inset: 10%;
   pointer-events: none;
 }
+
+/* Vídeo de fundo */
 #bg{
   position:fixed;
   inset:0;
@@ -36,48 +40,71 @@ html, body{
   object-fit:cover;
   pointer-events:none;
 }
+
+/* Card central menor */
 .card{
   position:relative;
   background:rgba(0,0,0,0.65);
   backdrop-filter:blur(6px);
-  padding:40px 30px;
-  border-radius:18px;
-  width:340px;
-  max-width:90%;
+  padding:20px 15px;
+  border-radius:16px;
+  width:260px;
+  max-width:80%;
   box-shadow:0 0 20px rgba(0,0,0,0.7);
   overflow: visible;
   animation: raioGlow 2s infinite;
 }
 .tremendo{ animation: tremer 1.8s infinite alternate; }
-.raios{ position:absolute; inset:0; pointer-events:none; z-index:0; opacity:0.9; }
-.raios svg{ width:100%; height:100%; }
-#nome, #pergunta, #msg, .botoes{ position:relative; z-index:1; }
-#nome{ font-size:26px; color:#ffcc00; margin-bottom:10px; animation: textoGlow 2s infinite alternate; }
-#pergunta{ font-size:20px; margin-bottom:15px; animation: subirDescer 3s ease-in-out infinite; }
-#msg{ font-size:16px; margin-bottom:20px; color:#00e676; }
+
+/* Textos */
+#nome{ font-size:20px; color:#ffcc00; margin-bottom:8px; animation: textoGlow 2s infinite alternate; }
+#pergunta{ font-size:16px; margin-bottom:12px; animation: subirDescer 3s ease-in-out infinite; }
+#msg{ font-size:14px; margin-bottom:16px; color:#00e676; }
+
+/* Botões */
 button{
-  padding:14px 28px;
-  margin:8px;
-  font-size:18px;
+  padding:10px 20px;
+  margin:6px;
+  font-size:16px;
   border:none;
-  border-radius:12px;
+  border-radius:10px;
   cursor:pointer;
-  transition:0.2s;
   font-weight:600;
+  position:relative;
+  transition:0.2s;
 }
 .sim{ background:linear-gradient(45deg,#00c853,#00e676); color:black; }
 .nao{ background:linear-gradient(45deg,#d50000,#ff5252); color:white; }
 button:hover{ transform:none; }
-.sim:hover{ transform:none; }
 
-@keyframes tremer{0%{transform:translate(0,0) rotate(0deg);}50%{transform:translate(1px,-1px) rotate(0.2deg);}100%{transform:translate(-1px,1px) rotate(-0.2deg);}}
-@keyframes raioGlow{0%{box-shadow:0 0 10px #00e5ff,0 0 30px #ff00ff;}50%{box-shadow:0 0 20px #00e5ff,0 0 60px #ff00ff;}100%{box-shadow:0 0 10px #00e5ff,0 0 30px #ff00ff;}}
-@keyframes textoGlow{from{text-shadow:0 0 5px #ffcc00;}to{text-shadow:0 0 20px #ffcc00,0 0 40px #ff9800;}}
-@keyframes subirDescer{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
-@keyframes relampago{0%{opacity:0;}20%{opacity:1;}40%{opacity:0;}100%{opacity:0;}}
-.raio1{animation:relampago 4s infinite;}
-.raio2{animation:relampago 5s infinite 1s;}
-.raio3{animation:relampago 6s infinite 2s;}
+/* Animações */
+@keyframes tremer{
+  0%{ transform:translate(0,0) rotate(0deg); }
+  50%{ transform:translate(1px,-1px) rotate(0.2deg); }
+  100%{ transform:translate(-1px,1px) rotate(-0.2deg); }
+}
+@keyframes raioGlow{
+  0%{ box-shadow:0 0 10px #00e5ff, 0 0 30px #ff00ff; }
+  50%{ box-shadow:0 0 20px #00e5ff, 0 0 60px #ff00ff; }
+  100%{ box-shadow:0 0 10px #00e5ff, 0 0 30px #ff00ff; }
+}
+@keyframes textoGlow{
+  from{ text-shadow:0 0 5px #ffcc00; }
+  to{ text-shadow:0 0 20px #ffcc00, 0 0 40px #ff9800; }
+}
+@keyframes subirDescer{
+  0%,100%{ transform:translateY(0); }
+  50%{ transform:translateY(-4px); }
+}
+
+/* Ajuste para celular */
+@media (max-width:768px){
+  .card{ width:180px; padding:12px; border-radius:12px; }
+  #nome{ font-size:14px; margin-bottom:4px; }
+  #pergunta{ font-size:13px; margin-bottom:6px; }
+  #msg{ font-size:12px; margin-bottom:6px; }
+  button{ padding:6px 10px; font-size:12px; margin:4px; border-radius:8px; }
+}
 </style>
 </head>
 <body>
@@ -90,21 +117,12 @@ button:hover{ transform:none; }
 <div class="safe-area" id="safeArea"></div>
 
 <div class="card tremendo">
-  <div class="raios">
-    <svg viewBox="0 0 300 400" preserveAspectRatio="none">
-      <polyline class="raio1" points="50,0 80,80 40,140 90,220 60,300" fill="none" stroke="#00e5ff" stroke-width="2"/>
-      <polyline class="raio2" points="200,0 170,90 210,160 160,240 190,330" fill="none" stroke="#ff00ff" stroke-width="2"/>
-      <polyline class="raio3" points="120,0 140,70 110,140 150,210 130,300" fill="none" stroke="#ffffff" stroke-width="1"/>
-    </svg>
-  </div>
-
   <h1 id="nome"></h1>
   <p id="pergunta">Você vai?</p>
   <p id="msg"></p>
-
   <div class="botoes">
-    <button class="sim" id="btnSim">SIM</button>
-    <button class="nao" id="btnNao">NÃO</button>
+    <button class="sim" id="btnSim" onclick="responder('SIM')">SIM</button>
+    <button class="nao" onclick="responder('NAO')">NÃO</button>
   </div>
 </div>
 
@@ -113,31 +131,21 @@ const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
 const btnSim = document.getElementById("btnSim");
-const btnNao = document.getElementById("btnNao");
-
-// Pega a posição inicial dentro da .card
-let posInicial = null;
-window.addEventListener("load", ()=>{
-  const rect = btnSim.getBoundingClientRect();
-  posInicial = { x: rect.left, y: rect.top };
-});
-
-const MAX_DESLOC_X = 120;
-const MAX_DESLOC_Y = 120;
+const btnNao = document.querySelector(".nao");
 
 function moverBotao(){
-  if(!posInicial) return;
+  const margem = 8;
   const area = document.getElementById("safeArea").getBoundingClientRect();
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
   const naoRect = btnNao.getBoundingClientRect();
+  let x, y, tentativas = 0;
 
-  let x, y, tentativas=0;
-  do{
-    x = posInicial.x + (Math.random()*2-1)*MAX_DESLOC_X;
-    y = posInicial.y + (Math.random()*2-1)*MAX_DESLOC_Y;
+  do {
+    x = area.left + Math.random() * (area.width - bw - 2*margem) + margem;
+    y = area.top  + Math.random() * (area.height - bh - 2*margem) + margem;
     tentativas++;
-    if(tentativas>50) break;
+    if(tentativas > 50) break;
   } while (
     x > naoRect.left - bw &&
     x < naoRect.right &&
@@ -145,19 +153,20 @@ function moverBotao(){
     y < naoRect.bottom
   );
 
-  // Tornar fixed somente no momento da fuga
   btnSim.style.position = "fixed";
-  btnSim.style.left = Math.min(Math.max(x, area.left), area.right - bw) + "px";
-  btnSim.style.top  = Math.min(Math.max(y, area.top), area.bottom - bh) + "px";
+  btnSim.style.left = x + "px";
+  btnSim.style.top  = y + "px";
   btnSim.style.zIndex = "999";
 }
 
 function ativarFuga(){
-  document.addEventListener("mousemove", (e)=>{
+  document.addEventListener("mousemove", (e) => {
     const rect = btnSim.getBoundingClientRect();
-    const centroX = rect.left + rect.width/2;
-    const centroY = rect.top + rect.height/2;
-    if(Math.hypot(e.clientX - centroX, e.clientY - centroY)<120) moverBotao();
+    const dx = e.clientX - (rect.left + rect.width/2);
+    const dy = e.clientY - (rect.top + rect.height/2);
+    if(Math.sqrt(dx*dx + dy*dy) < 120){
+      moverBotao();
+    }
   });
 
   btnSim.addEventListener("touchstart", moverBotao);
@@ -175,23 +184,18 @@ let etapaAtual = 0;
 function responder(resp){
   const pergunta = document.getElementById("pergunta");
   const msg = document.getElementById("msg");
-
-  if(resp === "SIM"){
+  if(resp==="SIM"){
     etapaAtual++;
     if(etapaAtual < etapas.length){
       pergunta.innerText = etapas[etapaAtual];
-      if(etapaAtual === etapas.length - 1) ativarFuga();
+      if(etapaAtual === etapas.length-1) ativarFuga();
       return;
     }
   }
-
-  if(resp === "NAO"){
+  if(resp==="NAO"){
     msg.innerText = "fico triste com uma notícia dessa 🥳🎉";
   }
 }
-
-btnSim.addEventListener("click", ()=>responder("SIM"));
-btnNao.addEventListener("click", ()=>responder("NAO"));
 </script>
 
 </body>
