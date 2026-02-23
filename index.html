@@ -161,6 +161,54 @@ button:hover{ transform:scale(1.08); }
 <script>
 const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
+
+const btnSim = document.getElementById("btnSim");
+
+function moverBotao(){
+  const largura = window.innerWidth - btnSim.offsetWidth - 20;
+  const altura = window.innerHeight - btnSim.offsetHeight - 20;
+  btnSim.style.position = "fixed";
+  btnSim.style.left = Math.random() * largura + "px";
+  btnSim.style.top = Math.random() * altura + "px";
+}
+
+function ativarFuga(){
+  document.addEventListener("mousemove", (e) => {
+    const rect = btnSim.getBoundingClientRect();
+    const cx = rect.left + rect.width/2;
+    const cy = rect.top + rect.height/2;
+    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
+    if(d < 120) moverBotao();
+  });
+  btnSim.addEventListener("touchstart", moverBotao, {passive:false});
+  btnSim.addEventListener("mousedown", e => { e.preventDefault(); moverBotao(); });
+}
+
+const etapas = [
+  "Você vai?",
+  "Você tem certeza?",
+  "Você tem certeza absoluta?",
+  "É sua última chance de dizer não..."
+];
+let etapaAtual = 0;
+
+function responder(resp){
+  const pergunta = document.getElementById("pergunta");
+  const msg = document.getElementById("msg");
+
+  if(resp === "SIM"){
+    etapaAtual++;
+    if(etapaAtual < etapas.length){
+      pergunta.innerText = etapas[etapaAtual];
+      if(etapaAtual === etapas.length - 1) ativarFuga();
+      return;
+    }
+  }
+
+  if(resp === "NAO"){
+    msg.innerText = "fico triste com uma notícia dessa 🥳🎉";
+  }
+}
 </script>
 
 </body>
