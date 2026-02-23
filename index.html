@@ -111,6 +111,7 @@ button{
 .sim{ background:linear-gradient(45deg,#00c853,#00e676); color:black; }
 .nao{ background:linear-gradient(45deg,#d50000,#ff5252); color:white; }
 button:hover{ transform:scale(1.08); }
+.sim:hover{ transform:none; }
 
 /* ANIMAÇÕES */
 @keyframes tremer{
@@ -178,11 +179,13 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const largura = window.innerWidth - 120;
-  const altura = window.innerHeight - 60;
+  const rect = btnSim.getBoundingClientRect();
 
-  const x = Math.random() * largura;
-  const y = Math.random() * altura;
+  const largura = window.innerWidth - rect.width - 10;
+  const altura  = window.innerHeight - rect.height - 10;
+
+  const x = Math.random() * Math.max(largura, 0);
+  const y = Math.random() * Math.max(altura, 0);
 
   btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
