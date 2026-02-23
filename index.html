@@ -115,22 +115,32 @@ const btnSim = document.getElementById("btnSim");
 function moverBotao(){
   const margem = 8;
   const area = document.getElementById("safeArea").getBoundingClientRect();
+  
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
-  const maxX = area.width - bw;
-  const maxY = area.height - bh;
+
   const btnNao = document.querySelector(".nao");
   const naoRect = btnNao.getBoundingClientRect();
 
   let x, y;
   let tentativas = 0;
 
-  do{
+  do {
+    // Limite máximo de salto vertical menor no celular
+    const maxX = area.width - bw;
+    const maxY = area.height - bh;
+    
     x = area.left + Math.random() * maxX;
-    y = area.top + Math.random() * maxY;
+    y = area.top  + Math.random() * maxY;
+
+    // No celular, limita ainda mais para não sumir
+    if(window.innerWidth <= 768){
+      y = Math.min(y, window.innerHeight - bh - margem);
+    }
+
     tentativas++;
-    if(tentativas>50) break;
-  } while(
+    if(tentativas > 50) break;
+  } while (
     x > (naoRect.left - bw - margem) &&
     x < (naoRect.right + margem) &&
     y > (naoRect.top - bh - margem) &&
@@ -138,7 +148,7 @@ function moverBotao(){
   );
 
   btnSim.style.left = x + "px";
-  btnSim.style.top = y + "px";
+  btnSim.style.top  = y + "px";
 }
 
 function ativarFuga(){
