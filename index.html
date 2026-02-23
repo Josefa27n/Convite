@@ -61,7 +61,7 @@ body{
   width:340px;
   max-width:90%;
   box-shadow:0 0 20px rgba(0,0,0,0.7);
-  overflow:hidden;
+  overflow: visible; /* não corta o botão quando ele foge */
   animation: tremer 1.8s infinite alternate, raioGlow 2s infinite;
 }
 
@@ -111,6 +111,7 @@ button{
 .sim{ background:linear-gradient(45deg,#00c853,#00e676); color:black; }
 .nao{ background:linear-gradient(45deg,#d50000,#ff5252); color:white; }
 button:hover{ transform:none; }
+.sim:hover{ transform: none; }
 
 /* ANIMAÇÕES */
 @keyframes tremer{
@@ -178,17 +179,17 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const rect = btnSim.getBoundingClientRect();
+  const margem = 10;
+  const largura = window.innerWidth - btnSim.offsetWidth - margem*2;
+  const altura  = window.innerHeight - btnSim.offsetHeight - margem*2;
 
-  const largura = window.innerWidth - rect.width - 10;
-  const altura  = window.innerHeight - rect.height - 10;
-
-  const x = Math.random() * Math.max(largura, 0);
-  const y = Math.random() * Math.max(altura, 0);
+  const x = Math.max(margem, Math.random() * largura);
+  const y = Math.max(margem, Math.random() * altura);
 
   btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
-  btnSim.style.top = y + "px";
+  btnSim.style.top  = y + "px";
+  btnSim.style.zIndex = 9999; // fica acima do card
   }
 
 function ativarFuga(){
