@@ -195,7 +195,12 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const margem = 12;
+  // 1. Zera a margem e fixa a posição para assumir o controle total do layout
+  btnSim.style.margin = "0"; 
+  btnSim.style.position = "fixed";
+  
+  // 2. Define uma margem de segurança maior para ele não triscar na borda da tela
+  const margemSeguranca = 20; 
 
   const vw = window.innerWidth;
   const vh = window.innerHeight;
@@ -203,17 +208,20 @@ function moverBotao(){
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
 
-  const maxX = Math.max(0, vw - bw - margem);
-  const maxY = Math.max(0, vh - bh - margem);
+  // 3. Calcula o espaço útil real subtraindo o botão e a margem de segurança dos dois lados
+  const maxX = vw - bw - (margemSeguranca * 2);
+  const maxY = vh - bh - (margemSeguranca * 2);
 
   const btnNao = document.querySelector(".nao");
   const naoRect = btnNao.getBoundingClientRect();
 
   let x, y;
 
+  // 4. Sorteia as coordenadas garantindo que não sobreponha o botão "NÃO"
   do {
-    x = Math.random() * maxX + margem;
-    y = Math.random() * maxY + margem;
+    // Adiciona a margem de segurança inicial para ele não grudar no topo/esquerda
+    x = (Math.random() * maxX) + margemSeguranca;
+    y = (Math.random() * maxY) + margemSeguranca;
   } while (
     x > naoRect.left - bw &&
     x < naoRect.right &&
@@ -223,8 +231,9 @@ function moverBotao(){
 
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
-  btnSim.style.zIndex = 2147483647;
-  }
+  btnSim.style.zIndex = "9999";
+}
+
   
 function ativarFuga(){
 
