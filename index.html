@@ -64,7 +64,6 @@ button{
   cursor:pointer;
   transition:0.2s;
   font-weight:600;
-  position:fixed; /* FIXO desde o início */
 }
 .sim{ background:linear-gradient(45deg,#00c853,#00e676); color:black; }
 .nao{ background:linear-gradient(45deg,#d50000,#ff5252); color:white; }
@@ -116,24 +115,25 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 const btnNao = document.getElementById("btnNao");
 
-// POSIÇÃO INICIAL FIXA do botão SIM
-const posInicial = { x: 250, y: 250 }; // ajuste conforme desejar
-btnSim.style.left = posInicial.x + "px";
-btnSim.style.top  = posInicial.y + "px";
+// Pega a posição inicial dentro da .card
+let posInicial = null;
+window.addEventListener("load", ()=>{
+  const rect = btnSim.getBoundingClientRect();
+  posInicial = { x: rect.left, y: rect.top };
+});
 
-// Limites máximos para deslocamento aleatório
 const MAX_DESLOC_X = 120;
 const MAX_DESLOC_Y = 120;
 
 function moverBotao(){
+  if(!posInicial) return;
   const area = document.getElementById("safeArea").getBoundingClientRect();
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
   const naoRect = btnNao.getBoundingClientRect();
 
   let x, y, tentativas=0;
-
-  do {
+  do{
     x = posInicial.x + (Math.random()*2-1)*MAX_DESLOC_X;
     y = posInicial.y + (Math.random()*2-1)*MAX_DESLOC_Y;
     tentativas++;
@@ -145,6 +145,8 @@ function moverBotao(){
     y < naoRect.bottom
   );
 
+  // Tornar fixed somente no momento da fuga
+  btnSim.style.position = "fixed";
   btnSim.style.left = Math.min(Math.max(x, area.left), area.right - bw) + "px";
   btnSim.style.top  = Math.min(Math.max(y, area.top), area.bottom - bh) + "px";
   btnSim.style.zIndex = "999";
@@ -155,8 +157,7 @@ function ativarFuga(){
     const rect = btnSim.getBoundingClientRect();
     const centroX = rect.left + rect.width/2;
     const centroY = rect.top + rect.height/2;
-    const distancia = Math.hypot(e.clientX - centroX, e.clientY - centroY);
-    if(distancia < 120) moverBotao();
+    if(Math.hypot(e.clientX - centroX, e.clientY - centroY)<120) moverBotao();
   });
 
   btnSim.addEventListener("touchstart", moverBotao);
