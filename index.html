@@ -24,6 +24,13 @@ html, body{
     overflow:hidden;
   }
 
+/* Área onde o botão pode fugir */
+.safe-area{
+  position: fixed;
+  inset: 10% 10%;   /* 80% da tela no centro */
+  pointer-events: none; /* não interfere em clique */
+}
+
 /* ===== VÍDEO DE FUNDO ===== */
 #bg{
   position:fixed;
@@ -163,6 +170,8 @@ button:hover{ transform:none; }
   <source src="fundo-mobile.mp4" type="video/mp4" media="(max-width: 768px)">
 </video>
 
+<div class="safe-area" id="safeArea"></div>
+
 <div class="card tremendo">
   <div class="raios">
     <svg viewBox="0 0 300 400" preserveAspectRatio="none">
@@ -189,33 +198,24 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  // 1. Zera a margem e fixa a posição para assumir o controle total do layout
-  btnSim.style.margin = "0"; 
-  btnSim.style.position = "fixed";
-  
-  // 2. Define uma margem de segurança maior para ele não triscar na borda da tela
-  const margemSeguranca = 20; 
+  const margem = 8;
 
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const area = document.getElementById("safeArea").getBoundingClientRect();
 
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
 
-  // 3. Calcula o espaço útil real subtraindo o botão e a margem de segurança dos dois lados
-  const maxX = vw - bw - (margemSeguranca * 2);
-  const maxY = vh - bh - (margemSeguranca * 2);
+  const maxX = area.width  - bw - margem;
+  const maxY = area.height - bh - margem;
 
   const btnNao = document.querySelector(".nao");
   const naoRect = btnNao.getBoundingClientRect();
 
   let x, y;
 
-  // 4. Sorteia as coordenadas garantindo que não sobreponha o botão "NÃO"
   do {
-    // Adiciona a margem de segurança inicial para ele não grudar no topo/esquerda
-    x = (Math.random() * maxX) + margemSeguranca;
-    y = (Math.random() * maxY) + margemSeguranca;
+    x = area.left + Math.random() * Math.max(0, maxX) + margem;
+    y = area.top  + Math.random() * Math.max(0, maxY) + margem;
   } while (
     x > naoRect.left - bw &&
     x < naoRect.right &&
@@ -223,11 +223,9 @@ function moverBotao(){
     y < naoRect.bottom
   );
 
-  btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
-  btnSim.style.zIndex = "9999";
-}
+      }
 
   
 function ativarFuga(){
