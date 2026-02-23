@@ -179,24 +179,48 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const largura = window.innerWidth - btnSim.offsetWidth - 20;
-  const altura = window.innerHeight - btnSim.offsetHeight - 20;
+  const largura = window.innerWidth - 120;
+  const altura = window.innerHeight - 60;
+
+  const x = Math.random() * largura;
+  const y = Math.random() * altura;
+
   btnSim.style.position = "fixed";
-  btnSim.style.left = Math.random() * largura + "px";
-  btnSim.style.top = Math.random() * altura + "px";
-}
+  btnSim.style.left = x + "px";
+  btnSim.style.top = y + "px";
+  }
 
 function ativarFuga(){
+
+  // Foge quando o mouse chega perto
   document.addEventListener("mousemove", (e) => {
+
     const rect = btnSim.getBoundingClientRect();
-    const cx = rect.left + rect.width/2;
-    const cy = rect.top + rect.height/2;
-    const d = Math.hypot(e.clientX - cx, e.clientY - cy);
-    if(d < 120) moverBotao();
+
+    const centroX = rect.left + rect.width / 2;
+    const centroY = rect.top + rect.height / 2;
+
+    const dx = e.clientX - centroX;
+    const dy = e.clientY - centroY;
+
+    const distancia = Math.sqrt(dx * dx + dy * dy);
+
+    if(distancia < 120){
+      moverBotao();
+    }
+
   });
-  btnSim.addEventListener("touchstart", moverBotao, {passive:false});
-  btnSim.addEventListener("mousedown", e => { e.preventDefault(); moverBotao(); });
-}
+
+  // Foge no celular
+  btnSim.addEventListener("touchstart", moverBotao);
+
+  // Foge se tentar clicar parado em cima
+  btnSim.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    moverBotao();
+  });
+
+  }
 
 const etapas = [
   "Você vai?",
