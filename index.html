@@ -73,9 +73,13 @@ html, body{
   max-width:90%;
   box-shadow:0 0 20px rgba(0,0,0,0.7);
   overflow: visible; /* não corta o botão quando ele foge */
-  animation: tremer 1.8s infinite alternate, raioGlow 2s infinite;
+  animation: raioGlow 2s infinite;
 }
 
+.tremendo{
+  animation: tremer 1.8s infinite alternate;
+}
+  
 /* RAIOS */
 .raios{
   position:absolute;
@@ -164,7 +168,7 @@ button:hover{ transform:none; }
   <source src="fundo-mobile.mp4" type="video/mp4" media="(max-width: 768px)">
 </video>
 
-<div class="card">
+<div class="card tremendo">
   <div class="raios">
     <svg viewBox="0 0 300 400" preserveAspectRatio="none">
       <polyline class="raio1" points="50,0 80,80 40,140 90,220 60,300" fill="none" stroke="#00e5ff" stroke-width="2"/>
@@ -197,38 +201,14 @@ function moverBotao(){
   const vw = document.documentElement.clientWidth;
   const vh = document.documentElement.clientHeight;
 
-  const bw = btnSim.offsetWidth;
-  const bh = btnSim.offsetHeight;
+  const bw = Math.max(btnSim.offsetWidth, 60);
+  const bh = Math.max(btnSim.offsetHeight, 40);
 
   const maxX = Math.max(0, vw - bw - margem);
   const maxY = Math.max(0, vh - bh - margem);
 
-  const btnNao = document.querySelector(".nao");
-  const naoRect = btnNao.getBoundingClientRect();
-
-  let x, y, tentativas = 0;
-
-  do {
-    x = margem + Math.random() * maxX;
-    y = margem + Math.random() * maxY;
-
-    const simRect = {
-      left: x,
-      top: y,
-      right: x + bw,
-      bottom: y + bh
-    };
-
-    const sobrepoe =
-      !(simRect.right < naoRect.left ||
-        simRect.left > naoRect.right ||
-        simRect.bottom < naoRect.top ||
-        simRect.top > naoRect.bottom);
-
-    if (!sobrepoe) break;
-
-    tentativas++;
-  } while (tentativas < 20);
+  let x = margem + Math.random() * maxX;
+  let y = margem + Math.random() * maxY;
 
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
