@@ -192,16 +192,47 @@ const btnSim = document.getElementById("btnSim");
 function moverBotao(){
   const margem = 12;
 
-  const largura = Math.max(0, window.innerWidth  - btnSim.offsetWidth  - margem*2);
-  const altura  = Math.max(0, window.innerHeight - btnSim.offsetHeight - margem*2);
-
-  const x = margem + Math.random() * largura;
-  const y = margem + Math.random() * altura;
-
   btnSim.style.position = "fixed";
+
+  const vw = document.documentElement.clientWidth;
+  const vh = document.documentElement.clientHeight;
+
+  const bw = btnSim.offsetWidth;
+  const bh = btnSim.offsetHeight;
+
+  const maxX = Math.max(0, vw - bw - margem);
+  const maxY = Math.max(0, vh - bh - margem);
+
+  const btnNao = document.querySelector(".nao");
+  const naoRect = btnNao.getBoundingClientRect();
+
+  let x, y, tentativas = 0;
+
+  do {
+    x = margem + Math.random() * maxX;
+    y = margem + Math.random() * maxY;
+
+    const simRect = {
+      left: x,
+      top: y,
+      right: x + bw,
+      bottom: y + bh
+    };
+
+    const sobrepoe =
+      !(simRect.right < naoRect.left ||
+        simRect.left > naoRect.right ||
+        simRect.bottom < naoRect.top ||
+        simRect.top > naoRect.bottom);
+
+    if (!sobrepoe) break;
+
+    tentativas++;
+  } while (tentativas < 20);
+
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
-  btnSim.style.zIndex = 9999;
+  btnSim.style.zIndex = 2147483647;
 }
 
 function ativarFuga(){
