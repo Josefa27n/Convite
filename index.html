@@ -19,52 +19,33 @@ body{
 }
 
 html, body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-  }
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
 
 /* Área onde o botão pode fugir */
 .safe-area{
   position: fixed;
-  inset: 10% 10%;   /* 80% da tela no centro */
-  pointer-events: none; /* não interfere em clique */
+  top:10%;
+  left:10%;
+  width:80%;
+  height:80%;
+  pointer-events:none;
 }
 
-/* ===== VÍDEO DE FUNDO ===== */
+/* Vídeo de fundo */
 #bg{
   position:fixed;
   inset:0;
   z-index:-2;
-  background:black;
   width:100%;
   height:100%;
-  object-fit:cover;       /* PC preenche */
-  pointer-events:none;    /* não captura clique */
+  object-fit:cover;
+  pointer-events:none;
 }
 
-/* 📱 CELULAR: mostra inteiro */
-@media (max-width: 768px){
-  .card{
-    width: 160px !important;
-    max-width: 70% !important;
-    padding: 8px 6px !important;
-    border-radius: 10px !important;
-  }
-
-  #nome{ font-size: 12px !important; margin-bottom: 4px !important; }
-  #pergunta{ font-size: 11px !important; margin-bottom: 6px !important; }
-  #msg{ font-size: 10px !important; margin-bottom: 6px !important; }
-
-  button{
-    padding: 6px 8px !important;
-    font-size: 11px !important;
-    margin: 4px !important;
-    border-radius: 8px !important;
-  }
-}
-
-/* ===== CAIXA CENTRAL ===== */
+/* Caixa central */
 .card{
   position:relative;
   background:rgba(0,0,0,0.65);
@@ -74,47 +55,11 @@ html, body{
   width:340px;
   max-width:90%;
   box-shadow:0 0 20px rgba(0,0,0,0.7);
-  overflow: visible; /* não corta o botão quando ele foge */
-  animation: raioGlow 2s infinite;
+  overflow:visible;
 }
+.tremendo{ animation: tremer 1.8s infinite alternate; }
 
-.tremendo{
-  animation: tremer 1.8s infinite alternate;
-}
-  
-/* RAIOS */
-.raios{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
-  opacity:0.9;
-}
-.raios svg{ width:100%; height:100%; }
-
-/* TEXTOS */
-#nome, #pergunta, #msg, .botoes{ position:relative; z-index:1; }
-
-#nome{
-  font-size:26px;
-  color:#ffcc00;
-  margin-bottom:10px;
-  animation: textoGlow 2s infinite alternate;
-}
-
-#pergunta{
-  font-size:20px;
-  margin-bottom:15px;
-  animation: subirDescer 3s ease-in-out infinite;
-}
-
-#msg{
-  font-size:16px;
-  margin-bottom:20px;
-  color:#00e676;
-}
-
-/* BOTÕES */
+/* Botões */
 button{
   padding:14px 28px;
   margin:8px;
@@ -124,67 +69,37 @@ button{
   cursor:pointer;
   transition:0.2s;
   font-weight:600;
+  position:relative;
 }
 .sim{ background:linear-gradient(45deg,#00c853,#00e676); color:black; }
 .nao{ background:linear-gradient(45deg,#d50000,#ff5252); color:white; }
-button:hover{ transform:none; }
-.sim:hover{ transform: none; }
 
-/* ANIMAÇÕES */
+/* Textos */
+#nome{ font-size:26px; color:#ffcc00; margin-bottom:10px; }
+#pergunta{ font-size:20px; margin-bottom:15px; }
+#msg{ font-size:16px; margin-bottom:20px; color:#00e676; }
+
+/* Animações */
 @keyframes tremer{
   0%{ transform:translate(0,0) rotate(0deg); }
   50%{ transform:translate(1px,-1px) rotate(0.2deg); }
   100%{ transform:translate(-1px,1px) rotate(-0.2deg); }
 }
-@keyframes raioGlow{
-  0%{ box-shadow:0 0 10px #00e5ff, 0 0 30px #ff00ff; }
-  50%{ box-shadow:0 0 20px #00e5ff, 0 0 60px #ff00ff; }
-  100%{ box-shadow:0 0 10px #00e5ff, 0 0 30px #ff00ff; }
-}
-@keyframes textoGlow{
-  from{ text-shadow:0 0 5px #ffcc00; }
-  to{ text-shadow:0 0 20px #ffcc00, 0 0 40px #ff9800; }
-}
-@keyframes subirDescer{
-  0%,100%{ transform:translateY(0); }
-  50%{ transform:translateY(-4px); }
-}
-@keyframes relampago{
-  0%{ opacity:0; }
-  20%{ opacity:1; }
-  40%{ opacity:0; }
-  100%{ opacity:0; }
-}
-.raio1{ animation: relampago 4s infinite; }
-.raio2{ animation: relampago 5s infinite 1s; }
-.raio3{ animation: relampago 6s infinite 2s; }
 </style>
 </head>
 <body>
 
-<!-- VÍDEO ÚNICO COM SOURCE CONDICIONAL -->
 <video id="bg" autoplay muted loop playsinline webkit-playsinline>
-  <!-- PC -->
   <source src="fundo.mp4" type="video/mp4" media="(min-width: 769px)">
-  <!-- CELULAR -->
   <source src="fundo-mobile.mp4" type="video/mp4" media="(max-width: 768px)">
 </video>
 
 <div class="safe-area" id="safeArea"></div>
 
 <div class="card tremendo">
-  <div class="raios">
-    <svg viewBox="0 0 300 400" preserveAspectRatio="none">
-      <polyline class="raio1" points="50,0 80,80 40,140 90,220 60,300" fill="none" stroke="#00e5ff" stroke-width="2"/>
-      <polyline class="raio2" points="200,0 170,90 210,160 160,240 190,330" fill="none" stroke="#ff00ff" stroke-width="2"/>
-      <polyline class="raio3" points="120,0 140,70 110,140 150,210 130,300" fill="none" stroke="#ffffff" stroke-width="1"/>
-    </svg>
-  </div>
-
   <h1 id="nome"></h1>
   <p id="pergunta">Você vai?</p>
   <p id="msg"></p>
-
   <div class="botoes">
     <button class="sim" id="btnSim" onclick="responder('SIM')">SIM</button>
     <button class="nao" onclick="responder('NAO')">NÃO</button>
@@ -200,28 +115,22 @@ const btnSim = document.getElementById("btnSim");
 function moverBotao(){
   const margem = 8;
   const area = document.getElementById("safeArea").getBoundingClientRect();
-  
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
-
-  // Calculamos o máximo que ele pode andar sem sair da safe-area
   const maxX = area.width - bw;
   const maxY = area.height - bh;
-
   const btnNao = document.querySelector(".nao");
   const naoRect = btnNao.getBoundingClientRect();
 
   let x, y;
-  let tentativas = 0; // Previne loop infinito caso a tela seja muito pequena
+  let tentativas = 0;
 
-  do {
-    // Pega as coordenadas relativas à tela, dentro da safe-area
-    x = area.left + (Math.random() * maxX);
-    y = area.top  + (Math.random() * maxY);
+  do{
+    x = area.left + Math.random() * maxX;
+    y = area.top + Math.random() * maxY;
     tentativas++;
-    if(tentativas > 50) break; // Segurança para o navegador não travar
-  } while (
-    // Evita sobrepor o botão NÃO
+    if(tentativas>50) break;
+  } while(
     x > (naoRect.left - bw - margem) &&
     x < (naoRect.right + margem) &&
     y > (naoRect.top - bh - margem) &&
@@ -229,59 +138,37 @@ function moverBotao(){
   );
 
   btnSim.style.left = x + "px";
-  btnSim.style.top  = y + "px";
+  btnSim.style.top = y + "px";
 }
 
 function ativarFuga(){
-  // Pega a posição exata de onde o botão está AGORA
   const rect = btnSim.getBoundingClientRect();
-  
-  // Transforma o botão em fixed, soltando-o do layout para poder voar pela tela
   btnSim.style.position = "fixed";
   btnSim.style.left = rect.left + "px";
   btnSim.style.top = rect.top + "px";
-  btnSim.style.margin = "0"; // Remove a margem para não interferir no cálculo
-  btnSim.style.zIndex = "999"; // Garante que ele fique por cima de tudo
+  btnSim.style.margin = "0";
+  btnSim.style.zIndex = "999";
 
-  // Foge quando o mouse chega perto
-  document.addEventListener("mousemove", (e) => {
+  document.addEventListener("mousemove", (e)=>{
     const btnRect = btnSim.getBoundingClientRect();
-    const centroX = btnRect.left + btnRect.width / 2;
-    const centroY = btnRect.top + btnRect.height / 2;
-
+    const centroX = btnRect.left + btnRect.width/2;
+    const centroY = btnRect.top + btnRect.height/2;
     const dx = e.clientX - centroX;
     const dy = e.clientY - centroY;
-    const distancia = Math.sqrt(dx * dx + dy * dy);
-
-    if(distancia < 120){
+    if(Math.sqrt(dx*dx+dy*dy)<120){
       moverBotao();
     }
   });
 
-  // Foge no celular ao tentar tocar
-  btnSim.addEventListener("touchstart", (e) => {
-    e.preventDefault(); // Evita o clique acidental no touch
+  btnSim.addEventListener("touchstart", (e)=>{
+    e.preventDefault();
     moverBotao();
   });
-
-  // Foge se tentar clicar parado em cima (mouse)
-  btnSim.addEventListener("mousedown", (e) => {
+  btnSim.addEventListener("mousedown", (e)=>{
     e.preventDefault();
     moverBotao();
   });
 }
-
-
-  // Foge no celular
-  btnSim.addEventListener("touchstart", moverBotao);
-
-  // Foge se tentar clicar parado em cima
-  btnSim.addEventListener("mousedown", (e) => {
-    e.preventDefault();
-    moverBotao();
-  });
-
-  }
 
 const etapas = [
   "Você vai?",
@@ -303,7 +190,6 @@ function responder(resp){
       return;
     }
   }
-
   if(resp === "NAO"){
     msg.innerText = "fico triste com uma notícia dessa 🥳🎉";
   }
