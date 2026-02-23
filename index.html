@@ -17,28 +17,6 @@ body{
   text-align:center;
   background:black;
 }
-html, body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-}
-.safe-area{
-  position: fixed;
-  top:10%;
-  left:10%;
-  width:80%;
-  height:80%;
-  pointer-events:none;
-}
-#bg{
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  pointer-events:none;
-}
 .card{
   position:relative;
   background:rgba(0,0,0,0.65);
@@ -60,7 +38,7 @@ button{
   cursor:pointer;
   transition:0.2s;
   font-weight:600;
-  position:relative;
+  position:fixed; /* FIXO desde o início */
 }
 .sim{ background:linear-gradient(45deg,#00c853,#00e676); color:black; }
 .nao{ background:linear-gradient(45deg,#d50000,#ff5252); color:white; }
@@ -76,21 +54,12 @@ button{
 </head>
 <body>
 
-<video id="bg" autoplay muted loop playsinline webkit-playsinline>
-  <source src="fundo.mp4" type="video/mp4" media="(min-width: 769px)">
-  <source src="fundo-mobile.mp4" type="video/mp4" media="(max-width: 768px)">
-</video>
-
-<div class="safe-area" id="safeArea"></div>
-
 <div class="card tremendo">
   <h1 id="nome"></h1>
   <p id="pergunta">Você vai?</p>
   <p id="msg"></p>
-  <div class="botoes">
-    <button class="sim" id="btnSim" onclick="responder('SIM')">SIM</button>
-    <button class="nao" onclick="responder('NAO')">NÃO</button>
-  </div>
+  <button class="sim" id="btnSim">SIM</button>
+  <button class="nao" id="btnNao">NÃO</button>
 </div>
 
 <script>
@@ -98,47 +67,22 @@ const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
 const btnSim = document.getElementById("btnSim");
-let posInicial = null;
+const btnNao = document.getElementById("btnNao");
 
-// Captura a posição inicial após o botão renderizar
-window.addEventListener("load", () => {
-  const rect = btnSim.getBoundingClientRect();
-  posInicial = { left: rect.left, top: rect.top };
-});
+// POSIÇÃO INICIAL FIXA do botão SIM
+const posInicial = { x: 250, y: 200 }; // ajustar conforme layout
+btnSim.style.left = posInicial.x + "px";
+btnSim.style.top  = posInicial.y + "px";
+
+// limites máximos de deslocamento
+const MAX_DESLOC_X = 100; // px esquerda/direita
+const MAX_DESLOC_Y = 100; // px cima/baixo
 
 function moverBotao(){
-  if(!posInicial) return;
-  const margem = 8;
-  const bw = btnSim.offsetWidth;
-  const bh = btnSim.offsetHeight;
-  const btnNao = document.querySelector(".nao");
-  const naoRect = btnNao.getBoundingClientRect();
-
-  // Limites máximos relativos à posição inicial
-  const minX = posInicial.left - 20;
-  const maxX = posInicial.left + 20;
-  const minY = posInicial.top - 50;
-  const maxY = posInicial.top + 50;
-
-  let x, y;
-  let tentativas = 0;
-
-  do {
-    x = Math.random() * (maxX - minX) + minX;
-    y = Math.random() * (maxY - minY) + minY;
-    tentativas++;
-    if(tentativas > 50) break;
-  } while (
-    x > (naoRect.left - bw - margem) &&
-    x < (naoRect.right + margem) &&
-    y > (naoRect.top - bh - margem) &&
-    y < (naoRect.bottom + margem)
-  );
-
-  btnSim.style.position = "fixed";
-  btnSim.style.left = x + "px";
-  btnSim.style.top  = y + "px";
-  btnSim.style.margin = "0";
+  const dx = (Math.random() * 2 - 1) * MAX_DESLOC_X;
+  const dy = (Math.random() * 2 - 1) * MAX_DESLOC_Y;
+  btnSim.style.left = (posInicial.x + dx) + "px";
+  btnSim.style.top  = (posInicial.y + dy) + "px";
   btnSim.style.zIndex = "999";
 }
 
@@ -147,9 +91,8 @@ function ativarFuga(){
     const rect = btnSim.getBoundingClientRect();
     const centroX = rect.left + rect.width/2;
     const centroY = rect.top + rect.height/2;
-    const dx = e.clientX - centroX;
-    const dy = e.clientY - centroY;
-    if(Math.sqrt(dx*dx + dy*dy)<120){
+    const distancia = Math.sqrt((e.clientX - centroX)**2 + (e.clientY - centroY)**2);
+    if(distancia < 120){
       moverBotao();
     }
   });
@@ -188,6 +131,10 @@ function responder(resp){
     msg.innerText = "fico triste com uma notícia dessa 🥳🎉";
   }
 }
+
+// eventos
+btnSim.addEventListener("click", ()=>responder("SIM"));
+btnNao.addEventListener("click", ()=>responder("NAO"));
 </script>
 
 </body>
