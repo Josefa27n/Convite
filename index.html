@@ -18,6 +18,17 @@ body{
   background:black;
 }
 
+html, body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+  }
+
+  #btnSim{
+    position: relative;
+    will-change: transform, left, top;
+  }
+
 /* ===== VÍDEO DE FUNDO ===== */
 #bg{
   position:fixed;
@@ -179,18 +190,19 @@ document.getElementById("nome").innerText = nome + ",";
 const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
-  const margem = 10;
-  const largura = window.innerWidth - btnSim.offsetWidth - margem*2;
-  const altura  = window.innerHeight - btnSim.offsetHeight - margem*2;
+  const margem = 12;
 
-  const x = Math.max(margem, Math.random() * largura);
-  const y = Math.max(margem, Math.random() * altura);
+  const largura = Math.max(0, window.innerWidth  - btnSim.offsetWidth  - margem*2);
+  const altura  = Math.max(0, window.innerHeight - btnSim.offsetHeight - margem*2);
+
+  const x = margem + Math.random() * largura;
+  const y = margem + Math.random() * altura;
 
   btnSim.style.position = "fixed";
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
-  btnSim.style.zIndex = 9999; // fica acima do card
-  }
+  btnSim.style.zIndex = 9999;
+}
 
 function ativarFuga(){
 
