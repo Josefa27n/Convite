@@ -26,10 +26,8 @@ html, body{
 
 #btnSim{
   position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   will-change: left, top;
+  transform: none !important;
 }
 
 /* ===== VÍDEO DE FUNDO ===== */
@@ -205,13 +203,13 @@ function moverBotao(){
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
 
-  const maxX = vw - bw - margem;
-  const maxY = vh - bh - margem;
-
-  let x, y;
+  const maxX = Math.max(0, vw - bw - margem);
+  const maxY = Math.max(0, vh - bh - margem);
 
   const btnNao = document.querySelector(".nao");
   const naoRect = btnNao.getBoundingClientRect();
+
+  let x, y;
 
   do {
     x = Math.random() * maxX + margem;
@@ -226,8 +224,8 @@ function moverBotao(){
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
   btnSim.style.zIndex = 2147483647;
-}
-
+  }
+  
 function ativarFuga(){
 
   // Foge quando o mouse chega perto
