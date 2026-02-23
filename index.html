@@ -24,10 +24,13 @@ html, body{
     overflow:hidden;
   }
 
-  #btnSim{
-    position: relative;
-    will-change: transform, left, top;
-  }
+#btnSim{
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  will-change: left, top;
+}
 
 /* ===== VÍDEO DE FUNDO ===== */
 #bg{
@@ -196,19 +199,29 @@ const btnSim = document.getElementById("btnSim");
 function moverBotao(){
   const margem = 12;
 
-  btnSim.style.position = "fixed";
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
 
-  const vw = document.documentElement.clientWidth;
-  const vh = document.documentElement.clientHeight;
+  const bw = btnSim.offsetWidth;
+  const bh = btnSim.offsetHeight;
 
-  const bw = Math.max(btnSim.offsetWidth, 60);
-  const bh = Math.max(btnSim.offsetHeight, 40);
+  const maxX = vw - bw - margem;
+  const maxY = vh - bh - margem;
 
-  const maxX = Math.max(0, vw - bw - margem);
-  const maxY = Math.max(0, vh - bh - margem);
+  let x, y;
 
-  let x = margem + Math.random() * maxX;
-  let y = margem + Math.random() * maxY;
+  const btnNao = document.querySelector(".nao");
+  const naoRect = btnNao.getBoundingClientRect();
+
+  do {
+    x = Math.random() * maxX + margem;
+    y = Math.random() * maxY + margem;
+  } while (
+    x > naoRect.left - bw &&
+    x < naoRect.right &&
+    y > naoRect.top - bh &&
+    y < naoRect.bottom
+  );
 
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
