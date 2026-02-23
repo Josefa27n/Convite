@@ -17,13 +17,11 @@ body{
   text-align:center;
   background:black;
 }
-
 html, body{
   width:100%;
   height:100%;
   overflow:hidden;
 }
-
 .safe-area{
   position: fixed;
   top:10%;
@@ -32,7 +30,6 @@ html, body{
   height:80%;
   pointer-events:none;
 }
-
 #bg{
   position:fixed;
   inset:0;
@@ -42,7 +39,6 @@ html, body{
   object-fit:cover;
   pointer-events:none;
 }
-
 .card{
   position:relative;
   background:rgba(0,0,0,0.65);
@@ -55,7 +51,6 @@ html, body{
   overflow:visible;
 }
 .tremendo{ animation: tremer 1.8s infinite alternate; }
-
 button{
   padding:14px 28px;
   margin:8px;
@@ -69,11 +64,9 @@ button{
 }
 .sim{ background:linear-gradient(45deg,#00c853,#00e676); color:black; }
 .nao{ background:linear-gradient(45deg,#d50000,#ff5252); color:white; }
-
 #nome{ font-size:26px; color:#ffcc00; margin-bottom:10px; }
 #pergunta{ font-size:20px; margin-bottom:15px; }
 #msg{ font-size:16px; margin-bottom:20px; color:#00e676; }
-
 @keyframes tremer{
   0%{ transform:translate(0,0) rotate(0deg); }
   50%{ transform:translate(1px,-1px) rotate(0.2deg); }
@@ -105,16 +98,23 @@ const nome = new URLSearchParams(location.search).get("nome") || "Convidado";
 document.getElementById("nome").innerText = nome + ",";
 
 const btnSim = document.getElementById("btnSim");
-const posInicial = btnSim.getBoundingClientRect(); // posição inicial fixa do SIM
+let posInicial = null;
+
+// Captura a posição inicial após o botão renderizar
+window.addEventListener("load", () => {
+  const rect = btnSim.getBoundingClientRect();
+  posInicial = { left: rect.left, top: rect.top };
+});
 
 function moverBotao(){
+  if(!posInicial) return;
   const margem = 8;
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
   const btnNao = document.querySelector(".nao");
   const naoRect = btnNao.getBoundingClientRect();
 
-  // limites relativos à posição inicial
+  // Limites máximos relativos à posição inicial
   const minX = posInicial.left - 20;
   const maxX = posInicial.left + 20;
   const minY = posInicial.top - 50;
