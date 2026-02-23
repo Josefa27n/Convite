@@ -199,55 +199,78 @@ const btnSim = document.getElementById("btnSim");
 
 function moverBotao(){
   const margem = 8;
-
   const area = document.getElementById("safeArea").getBoundingClientRect();
-
+  
   const bw = btnSim.offsetWidth;
   const bh = btnSim.offsetHeight;
 
-  const maxX = area.width  - bw - margem;
-  const maxY = area.height - bh - margem;
+  // Calculamos o máximo que ele pode andar sem sair da safe-area
+  const maxX = area.width - bw;
+  const maxY = area.height - bh;
 
   const btnNao = document.querySelector(".nao");
   const naoRect = btnNao.getBoundingClientRect();
 
   let x, y;
+  let tentativas = 0; // Previne loop infinito caso a tela seja muito pequena
 
   do {
-    x = area.left + Math.random() * Math.max(0, maxX) + margem;
-    y = area.top  + Math.random() * Math.max(0, maxY) + margem;
+    // Pega as coordenadas relativas à tela, dentro da safe-area
+    x = area.left + (Math.random() * maxX);
+    y = area.top  + (Math.random() * maxY);
+    tentativas++;
+    if(tentativas > 50) break; // Segurança para o navegador não travar
   } while (
-    x > naoRect.left - bw &&
-    x < naoRect.right &&
-    y > naoRect.top - bh &&
-    y < naoRect.bottom
+    // Evita sobrepor o botão NÃO
+    x > (naoRect.left - bw - margem) &&
+    x < (naoRect.right + margem) &&
+    y > (naoRect.top - bh - margem) &&
+    y < (naoRect.bottom + margem)
   );
 
   btnSim.style.left = x + "px";
   btnSim.style.top  = y + "px";
-      }
+}
 
-  
 function ativarFuga(){
+  // Pega a posição exata de onde o botão está AGORA
+  const rect = btnSim.getBoundingClientRect();
+  
+  // Transforma o botão em fixed, soltando-o do layout para poder voar pela tela
+  btnSim.style.position = "fixed";
+  btnSim.style.left = rect.left + "px";
+  btnSim.style.top = rect.top + "px";
+  btnSim.style.margin = "0"; // Remove a margem para não interferir no cálculo
+  btnSim.style.zIndex = "999"; // Garante que ele fique por cima de tudo
 
   // Foge quando o mouse chega perto
   document.addEventListener("mousemove", (e) => {
-
-    const rect = btnSim.getBoundingClientRect();
-
-    const centroX = rect.left + rect.width / 2;
-    const centroY = rect.top + rect.height / 2;
+    const btnRect = btnSim.getBoundingClientRect();
+    const centroX = btnRect.left + btnRect.width / 2;
+    const centroY = btnRect.top + btnRect.height / 2;
 
     const dx = e.clientX - centroX;
     const dy = e.clientY - centroY;
-
     const distancia = Math.sqrt(dx * dx + dy * dy);
 
     if(distancia < 120){
       moverBotao();
     }
-
   });
+
+  // Foge no celular ao tentar tocar
+  btnSim.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // Evita o clique acidental no touch
+    moverBotao();
+  });
+
+  // Foge se tentar clicar parado em cima (mouse)
+  btnSim.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    moverBotao();
+  });
+}
+
 
   // Foge no celular
   btnSim.addEventListener("touchstart", moverBotao);
